@@ -1,0 +1,6 @@
+# Ignoruj wirtualne środowisko
+venv/
+
+# Ignoruj cache Pythona
+__pycache__/
+*.pyc
