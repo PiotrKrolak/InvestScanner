@@ -4,3 +4,6 @@ venv/
 # Ignoruj cache Pythona
 __pycache__/
 *.pyc
+
+# Ignoruj pliki test.py 
+test.py
