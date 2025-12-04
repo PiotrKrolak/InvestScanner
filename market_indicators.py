@@ -3,79 +3,122 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import yfinance as yf
 
-"""
-Minimalna wersja do implementacji w pierwszej kolejności:
-P/E
-P/B
-EV/EBITDA
-EPS
-ROE
-ROA
-D/E (Debt-to-Equity)
-Current Ratio
-Free Cash Flow
-Net Profit Margin
+
+def get_ticker_info(ticker_symbol: str) -> dict:
+    """
+    Fetches the full info dictionary for a given stock ticker.
+
+    Parameters
+    ----------
+    ticker_symbol : str
+        Stock ticker symbol (e.g., "AAPL").
+
+    Returns
+    -------
+    dict
+        A dictionary containing company fundamental data returned by yfinance.
+    """
+    return yf.Ticker(ticker_symbol).info
 
 
+def get_pe_ratio(info: dict):
+    """
+    Returns the Price/Earnings (P/E) ratio.
 
-Wskaźniki fundamentalne do implementacji w InvestScanner:
+    Parameters
+    ----------
+    info : dict
+        Ticker.info dictionary.
 
-1. P/E (Price/Earnings Ratio)
-Relacja ceny do zysku.
-Najpopularniejszy wskaźnik wyceny.
-Pozwala ocenić, czy akcja jest droga/tania względem zysku.
+    Returns
+    -------
+    float or None
+        Trailing P/E ratio if available.
+    """
+    return info.get("trailingPE")
 
-2. P/B (Price/Book Ratio)
-Cena akcji do wartości księgowej.
-Dobre dla spółek kapitałowych (np. banki).
 
-3. P/S (Price/Sales Ratio)
-Cena do przychodów.
-Użyteczne gdy firma ma mały lub zerowy zysk.
+def get_pb_ratio(info: dict):
+    """
+    Returns the Price/Book (P/B) ratio.
+    """
+    return info.get("priceToBook")
 
-4. EV/EBITDA
-Kluczowy wskaźnik do wyceny przedsiębiorstw (bardziej kompletny niż P/E).
-Uwzględnia dług.
 
-5. EPS (Earnings Per Share)
-Zysk na akcję.
-Często wykorzystywany także do obliczeń P/E.
+def get_ps_ratio(info: dict):
+    """
+    Returns the Price/Sales (P/S) ratio.
+    """
+    return info.get("priceToSalesTrailing12Months")
 
-6. ROE (Return on Equity)
-Zwrot na kapitale własnym.
-Pokazuje efektywność wykorzystania kapitału.
 
-7. ROA (Return on Assets)
-Zwrot na aktywach.
-Wskaźnik efektywności majątku spółki.
+def get_ev_ebitda(info: dict):
+    """
+    Calculates the EV/EBITDA ratio.
 
-8. Debt-to-Equity (D/E)
-Stosunek zadłużenia do kapitału własnego.
-Podstawowy wskaźnik ryzyka finansowego.
+    Returns
+    -------
+    float or None
+        EV/EBITDA if both enterprise value and EBITDA are available.
+    """
+    ev = info.get("enterpriseValue")
+    ebitda = info.get("ebitda")
 
-9. Current Ratio
-Wskaźnik płynności podstawowej: aktywa obrotowe / zobowiązania krótkoterminowe.
+    if ev is not None and ebitda not in (None, 0):
+        return ev / ebitda
+    return None
 
-10. Quick Ratio (Acid Test)
-Jak wyżej, ale wyłącza zapasy.
 
-11. Gross Margin
-Marża brutto.
-Pokazuje efektywność produkcji / usług.
+def get_eps(info: dict):
+    """Returns Earnings Per Share (EPS)."""
+    return info.get("trailingEps")
 
-12. Operating Margin
-Marża operacyjna (EBIT margin).
-Bardzo istotna przy analizie rentowności.
 
-13. Net Profit Margin
-Marża zysku netto.
-Ostateczna rentowność biznesu.
+def get_roe(info: dict):
+    """Returns Return on Equity (ROE)."""
+    return info.get("returnOnEquity")
 
-14. Free Cash Flow (FCF)
-Najważniejszy wskaźnik zdrowia finansowego i możliwości inwestycyjnych spółki.
 
-15. Dividend Yield
-Dla spółek dywidendowych.
-Stosunek dywidendy do ceny akcji.
+def get_roa(info: dict):
+    """Returns Return on Assets (ROA)."""
+    return info.get("returnOnAssets")
 
-"""
+
+def get_de_ratio(info: dict):
+    """Returns the Debt-to-Equity (D/E) ratio."""
+    return info.get("debtToEquity")
+
+
+def get_current_ratio(info: dict):
+    """Returns the Current Ratio."""
+    return info.get("currentRatio")
+
+
+def get_quick_ratio(info: dict):
+    """Returns the Quick Ratio (Acid Test)."""
+    return info.get("quickRatio")
+
+
+def get_gross_margin(info: dict):
+    """Returns the Gross Margin."""
+    return info.get("grossMargins")
+
+
+def get_operating_margin(info: dict):
+    """Returns the Operating Margin."""
+    return info.get("operatingMargins")
+
+
+def get_net_profit_margin(info: dict):
+    """Returns the Net Profit Margin."""
+    return info.get("profitMargins")
+
+
+def get_free_cash_flow(info: dict):
+    """Returns the Free Cash Flow."""
+    return info.get("freeCashflow")
+
+
+def get_dividend_yield(info: dict):
+    """Returns the Dividend Yield."""
+    return info.get("dividendYield")
