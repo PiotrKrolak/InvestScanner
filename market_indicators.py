@@ -38,6 +38,55 @@ def get_pe_ratio(info: dict):
     return info.get("trailingPE")
 
 
+def get_historical_pe_ratio(ticker_symbol: str, period: str = "1y") -> pd.Series:
+    """
+    Oblicza historyczny wskaźnik P/E (Trailing) dla określonego okresu.
+    
+    UWAGA: Wskaźnik ten jest obliczany na podstawie historycznych cen zamknięcia 
+    i ostatniego dostępnego Zysku na Akcję (EPS). Zakłada, że EPS pozostaje 
+    stały w danym okresie, co jest uproszczeniem dla celów wizualizacji.
+
+    Parameters
+    ----------
+    ticker_symbol : str
+        Stock ticker symbol (e.g., "AAPL").
+    period : str
+        Okres historyczny (np. "1y", "6mo", "3mo").
+
+    Returns
+    -------
+    pd.Series
+        Seria Pandas z historycznymi wskaźnikami P/E (indeks to data).
+    """
+    ticker = yf.Ticker(ticker_symbol)
+    
+    # 1. Pobierz historyczne ceny zamknięcia (Close)
+    hist = ticker.history(period=period)
+    
+    if hist.empty:
+        print(f"Brak danych historycznych dla {ticker_symbol}.")
+        return pd.Series()
+
+    # 2. Pobierz ostatni dostępny Zysk na Akcję (EPS) (Trailing EPS)
+    # Jest to wartość aktualna. Yfinance nie udostępnia łatwo historycznej serii EPS.
+    info = ticker.info
+    trailing_eps = info.get("trailingEps")
+    
+    if trailing_eps is None or trailing_eps <= 0:
+        print(f"Brak lub zerowy trailingEps dla {ticker_symbol}. Nie można obliczyć P/E.")
+        return pd.Series(index=hist.index)
+        
+    # 3. Oblicz P/E dla każdego dnia: Cena zamknięcia / EPS
+    # Zakładamy, że trailing_eps jest stały w danym okresie.
+    historical_pe = hist['Close'] / trailing_eps
+    
+    # Zmień nazwę serii na 'Historical PE Ratio'
+    historical_pe.name = 'Historical PE Ratio'
+    
+    return historical_pe
+
+
+
 def get_pb_ratio(info: dict):
     """
     Returns the Price/Book (P/B) ratio.
