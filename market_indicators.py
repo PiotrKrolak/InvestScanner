@@ -40,12 +40,8 @@ def get_pe_ratio(info: dict):
 
 def get_historical_pe_ratio(ticker_symbol: str, period: str = "1y") -> pd.Series:
     """
-    Oblicza historyczny wskaźnik P/E (Trailing) dla określonego okresu.
+    Returns calculated historical Price/Earnings (P/E) ratio.
     
-    UWAGA: Wskaźnik ten jest obliczany na podstawie historycznych cen zamknięcia 
-    i ostatniego dostępnego Zysku na Akcję (EPS). Zakłada, że EPS pozostaje 
-    stały w danym okresie, co jest uproszczeniem dla celów wizualizacji.
-
     Parameters
     ----------
     ticker_symbol : str
