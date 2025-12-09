@@ -1,6 +1,7 @@
 import sys
 
-import market_indicators
+import market_indicators as mi
+import visualize as vz
 
 def main(args):
     """
